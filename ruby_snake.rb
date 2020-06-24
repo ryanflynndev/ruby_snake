@@ -66,6 +66,11 @@ class Snake
     def grow 
         @growing = true
     end
+
+    def hit_itself?
+        @positions.uniq.length != @positions.length
+    end
+
     private
 
     def new_coords(x, y)
@@ -84,14 +89,15 @@ class Game
         @score = 0
         @food_x = rand(GRID_WIDTH)
         @food_y = rand(GRID_HEIGHT)
+        @finished = false
     end
     def draw
-        
-        Square.new(
-        x: @food_x * GRID_SIZE, y: @food_y * GRID_SIZE, size: GRID_SIZE, color: 'yellow'
-        )
-
-        Text.new("Score: #{@score}", color: "white", x: 10, y: 10, size: 20)
+        unless finished?
+            Square.new(
+            x: @food_x * GRID_SIZE, y: @food_y * GRID_SIZE, size: GRID_SIZE, color: 'yellow'
+            )
+        end
+        Text.new(text_message, color: "white", x: 10, y: 10, size: 20)
         
     end
 
@@ -104,6 +110,24 @@ class Game
         @food_x = rand(GRID_WIDTH)
         @food_y = rand(GRID_HEIGHT)        
     end
+
+    def finish 
+        @finished = true
+    end
+
+    def finished?
+        @finished
+    end
+
+    private 
+
+    def text_message 
+        if finished?
+            "Game over, your score was: #{@score}. Press 'R' to reset.  "
+        else 
+            "Score: #{@score}"
+        end
+    end
 end
 
 snake = Snake.new 
@@ -114,13 +138,18 @@ game = Game.new
 update do 
     clear
 
-    snake.move
+    unless game.finished?
+     snake.move
+    end
     snake.draw
     game.draw
 
     if game.snake_hit_food?(snake.x, snake.y)
         game.record_hit 
         snake.grow
+    end
+    if snake.hit_itself?
+        game.finish
     end
 end
 
@@ -129,6 +158,9 @@ on :key_down do |event|
         if snake.can_change_direction_to?(event.key)
             snake.direction = event.key
         end
+    elsif event.key == 'r'
+        snake = Snake.new
+        game = Game.new
     end
 end
-show
+show 
