@@ -63,8 +63,26 @@ class Snake
 
 end
 
+class Game 
+    def initialize
+        @score = 0
+        @food_x = rand(GRID_WIDTH)
+        @food_y = rand(GRID_HEIGHT)
+    end
+    def draw
+        
+        Square.new(
+        x: @food_x * GRID_SIZE, y: @food_y * GRID_SIZE, size: GRID_SIZE, color: 'yellow'
+        )
+
+        Text.new("Score: #{@score}", color: "white", x: 10, y: 10, size: 20)
+        
+    end
+end
+
 snake = Snake.new 
-snake.draw
+game = Game.new
+#snake.draw
 
 #Updates every frame
 update do 
@@ -72,6 +90,7 @@ update do
 
     snake.move
     snake.draw
+    game.draw
 end
 
 on :key_down do |event|
