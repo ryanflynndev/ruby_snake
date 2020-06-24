@@ -18,6 +18,7 @@ class Snake
         # Our snake's starting position, and direction.
         @positions = [[2,0], [2,1], [2,2], [2,3]]
         @direction = 'down'
+        @growing = false
     end
 
     def draw
@@ -29,7 +30,9 @@ class Snake
     end
     
     def move
-    @positions.shift
+    if !@growing
+        @positions.shift
+    end
      case @direction 
      when 'down'
         @positions.push(new_coords(head[0], head[1] + 1))
@@ -41,6 +44,7 @@ class Snake
         @positions.push(new_coords(head[0] - 1, head[1]))
 
      end
+     @growing = false
     end
     def can_change_direction_to?(new_direction)
         case @direction 
@@ -59,6 +63,9 @@ class Snake
         head[1]
     end
 
+    def grow 
+        @growing = true
+    end
     private
 
     def new_coords(x, y)
@@ -88,7 +95,7 @@ class Game
         
     end
 
-    def snake_hit_ball?(x, y)
+    def snake_hit_food?(x, y)
         @food_x == x && @food_y == y 
     end
 
@@ -111,8 +118,9 @@ update do
     snake.draw
     game.draw
 
-    if game.snake_hit_ball?(snake.x, snake.y)
+    if game.snake_hit_food?(snake.x, snake.y)
         game.record_hit 
+        snake.grow
     end
 end
 
