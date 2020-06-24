@@ -11,6 +11,7 @@ set fps_cap: 20
 GRID_SIZE = 20
 
 class Snake
+    attr_writer :direction
     def initialize
         # Our snake's starting position, and direction.
         @positions = [[2,0], [2,1], [2,2], [2,3]]
@@ -30,6 +31,13 @@ class Snake
      case @direction 
      when 'down'
         @positions.push([head[0], head[1] + 1])
+     when 'up'
+        @positions.push([head[0], head[1] - 1])
+     when 'right'
+        @positions.push([head[0] + 1, head[1]])
+     when 'left'
+        @positions.push([head[0] - 1, head[1]])
+
      end
     end
 
@@ -44,6 +52,7 @@ end
 snake = Snake.new 
 snake.draw
 
+#Updates every frame
 update do 
     clear
 
@@ -51,4 +60,9 @@ update do
     snake.draw
 end
 
+on :key_down do |event|
+    if ['up', 'down', 'left', 'right'].include?(event.key)
+        snake.direction = event.key
+    end
+end
 show
