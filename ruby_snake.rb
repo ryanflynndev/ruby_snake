@@ -50,6 +50,15 @@ class Snake
         when 'left' then new_direction != 'right'
         end
     end
+
+    def x
+        head[0]
+    end
+
+    def y 
+        head[1]
+    end
+
     private
 
     def new_coords(x, y)
@@ -78,6 +87,16 @@ class Game
         Text.new("Score: #{@score}", color: "white", x: 10, y: 10, size: 20)
         
     end
+
+    def snake_hit_ball?(x, y)
+        @food_x == x && @food_y == y 
+    end
+
+    def record_hit
+        @score += 1
+        @food_x = rand(GRID_WIDTH)
+        @food_y = rand(GRID_HEIGHT)        
+    end
 end
 
 snake = Snake.new 
@@ -91,6 +110,10 @@ update do
     snake.move
     snake.draw
     game.draw
+
+    if game.snake_hit_ball?(snake.x, snake.y)
+        game.record_hit 
+    end
 end
 
 on :key_down do |event|
